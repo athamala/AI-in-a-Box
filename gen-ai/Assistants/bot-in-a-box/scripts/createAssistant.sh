@@ -9,7 +9,7 @@ done <<EOF
 $(azd env get-values)
 EOF
 
-AOAI_API_KEY=$(az cognitiveservices account keys list -n $AOAI_NAME -g $AZURE_RESOURCE_GROUP_NAME | jq -r .key1)
+AOAI_API_KEY=$(az cognitiveservices account keys list -n $AOAI_NAME -g $AZURE_RESOURCE_GROUP_NAME --subscription $AZURE_SUBSCRIPTION_ID | jq -r .key1)
 AOAI_ASSISTANT_NAME="assistant_in_a_box"
 ASSISTANT_ID=$(curl "$AOAI_API_ENDPOINT/openai/assistants?api-version=2024-02-15-preview" \
   -H "api-key: $AOAI_API_KEY"|\
@@ -42,4 +42,4 @@ ASSISTANT_ID=$(curl "$AOAI_API_ENDPOINT/openai/assistants?api-version=2024-02-15
   -H "api-key: $AOAI_API_KEY"|\
   jq -r '[.data[] | select( .name == "'$AOAI_ASSISTANT_NAME'")][0] | .id')
 
-az webapp config appsettings set -g $AZURE_RESOURCE_GROUP_NAME -n $APP_NAME --settings AOAI_ASSISTANT_ID=$ASSISTANT_ID APP_URL=$APP_HOSTNAME
+az webapp config appsettings set -g $AZURE_RESOURCE_GROUP_NAME -n $APP_NAME --subscription $AZURE_SUBSCRIPTION_ID --settings AOAI_ASSISTANT_ID=$ASSISTANT_ID APP_URL=$APP_HOSTNAME

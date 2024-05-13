@@ -10,7 +10,7 @@ foreach ($line in (& azd env get-values)) {
     }
 }
 
-$AOAI_API_KEY=az cognitiveservices account keys list -n $env:AOAI_NAME -g $env:AZURE_RESOURCE_GROUP_NAME --query key1 -o tsv
+$AOAI_API_KEY=az cognitiveservices account keys list -n $env:AOAI_NAME -g $env:AZURE_RESOURCE_GROUP_NAME --subscription $env:AZURE_SUBSCRIPTION_ID --query key1 -o tsv
 $AOAI_ASSISTANT_NAME="assistant_in_a_box"
 $ASSISTANT_ID=((curl "${env:AOAI_API_ENDPOINT}openai/assistants`?api-version=2024-02-15-preview" -H "api-key: $AOAI_API_KEY" | ConvertFrom-Json).data | Where-Object name -eq $AOAI_ASSISTANT_NAME).id
 
@@ -60,4 +60,4 @@ else
         echo "Assistant created/updated successfully"
     }
 
-az webapp config appsettings set -g $env:AZURE_RESOURCE_GROUP_NAME -n $env:APP_NAME --settings AOAI_ASSISTANT_ID=$ASSISTANT_ID APP_URL=$env:APP_HOSTNAME
+az webapp config appsettings set -g $env:AZURE_RESOURCE_GROUP_NAME -n $env:APP_NAME --subscription $env:AZURE_SUBSCRIPTION_ID --settings AOAI_ASSISTANT_ID=$ASSISTANT_ID APP_URL=$env:APP_HOSTNAME
